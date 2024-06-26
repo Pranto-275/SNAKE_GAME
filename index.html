@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+
+  </style>
+</head>
+
+<body>
+  <div class="main">
+    <div class="child">
+      <h2>Russell Viper</h2>
+      <div class="score_board">
+        <div>
+          <h3 style="color: red">Your Points : <span id="point"></span></h3>
+        </div>
+        <div>
+          <h3 style="color: red">Highest Score: <span id="h_score"></span></h3>
+        </div>
+      </div>
+      <div class="game_board">
+      </div>
+    </div>
+
+
+    <script>
+
+      const playboard = document.querySelector(".game_board");
+      let snakeX = 5, snakeY = 10;
+      let valocityX = 0, valocityY = 0
+      let timeInterval;
+      let point = 0;
+      let snakeBody = []
+      let hightscore;
+
+
+      let changeFoodPosition = () => {
+        foodX = Math.floor(Math.random() * 30) + 1;
+        foodY = Math.floor(Math.random() * 30) + 1;
+      }
+
+
+
+      let snakemove = (e) => {
+
+        if (e.key == 'ArrowUp') {
+          valocityX = 0;
+          valocityY = -1;
+        }
+        if (e.key == 'ArrowLeft') {
+          valocityX = -1;
+          valocityY = 0;
+        }
+
+        if (e.key == 'ArrowDown') {
+          valocityX = 0;
+          valocityY = 1;
+        }
+
+        if (e.key == 'ArrowRight') {
+          valocityX = 1;
+          valocityY = 0;
+        }
+        init()
+
+      }
+
+
+
+
+      let init = () => {
+        hightscore = localStorage.getItem("point");
+        document.getElementById("h_score").innerText = hightscore;
+
+        if (hightscore < point) {
+          document.getElementById("h_score").innerText = point;
+
+        }
+
+        snakeX += valocityX;
+        snakeY += valocityY;
+
+
+        if (snakeX == 31 || snakeX == 0) {
+
+
+          if (hightscore <= point) {
+            localStorage.setItem('point', point)
+          }
+          score_find = localStorage.getItem("point");
+
+          alert("Game Over!! Your Point is " + point + "hight scroe:" + score_find)
+          clearInterval(timeInterval);
+          location.reload();
+        }
+        if (snakeY == 31 || snakeY == 0) {
+          hightscore = localStorage.getItem("point");
+
+          if (hightscore <= point) {
+            localStorage.setItem('point', point)
+          }
+          score_find = localStorage.getItem("point");
+
+          alert("Game Over!! Your Point is " + point + "hight scroe:" + score_find)
+          clearInterval(timeInterval);
+          location.reload();
+        }
+
+
+
+
+
+
+        if ((foodY == snakeY) && (foodX == snakeX)) {
+
+          snakeBody.push([foodX, foodY])
+          point += 2
+          document.getElementById("point").innerHTML = point;
+          changeFoodPosition()
+        }
+
+
+        for (let i = snakeBody.length - 1; i > 0; i--) {
+          snakeBody[i] = snakeBody[i - 1];
+        }
+
+
+        snakeBody[0] = [snakeX, snakeY];
+
+
+        let html = `<div class ="food" style = "grid-area:${foodY} / ${foodX}"></div>`;
+
+        for (let i = 0; i < snakeBody.length; i++) {
+
+          html += `<div class ="snake" style = "grid-area:${snakeBody[i][1]} / ${snakeBody[i][0]}"></div>`;
+
+
+
+          if (i !== 0 && snakeBody[0][1] === snakeBody[i][1] && snakeBody[0][0] === snakeBody[i][0]) {
+            hightscore = localStorage.getItem("point");
+
+            if (hightscore <= point) {
+              localStorage.setItem('point', point)
+            }
+            score_find = localStorage.getItem("point");
+
+            alert("Game Over!! Your Point is " + point + "hight scroe:" + score_find)
+            clearInterval(timeInterval);
+            location.reload();
+          }
+
+
+
+
+
+        }
+
+
+
+        playboard.innerHTML = html
+
+      }
+
+      changeFoodPosition()
+
+
+
+
+      timeInterval = setInterval(() => {
+        init()
+      }, 200);
+
+      document.addEventListener("keydown", snakemove)
+
+
+
+
+    </script>
+</body>
+
+</html>
